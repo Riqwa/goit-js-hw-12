@@ -1,3 +1,11 @@
+import { createGallery, clearGallery, showLoader, hideLoader } from './js/render-functions.js';
+import { getImagesByQuery } from './js/pixabay-api.js';
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
+
+const form = document.querySelector('.form');
+
+
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const query = e.target.elements['search-text'].value.trim();
