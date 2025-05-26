@@ -142,3 +142,38 @@ body {
   }
 }
 
+
+.gallery-section {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.load-more {
+  display: inline-block;
+  margin-top: 32px;
+  background-color: #4E75FF;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  width: 125px;
+  height: 40px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.load-more:hover {
+  background-color: #3b5fe0;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.loader-more {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #555;
+}

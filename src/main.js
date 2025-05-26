@@ -1,23 +1,28 @@
-import { createGallery, clearGallery, showLoader, hideLoader } from './js/render-functions.js';
+import {
+  createGallery,
+  clearGallery,
+  showLoader,
+  hideLoader,
+  showLoadMoreButton,
+  hideLoadMoreButton,
+} from './js/render-functions.js';
 import { getImagesByQuery } from './js/pixabay-api.js';
-import iziToast from "izitoast";
-import "izitoast/dist/css/iziToast.min.css";
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
-
-const form = document.querySelector('#search-form');
+const form = document.querySelector('.form');
 const gallery = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
 
-let query = '';
-let page = 1;
+let currentQuery = '';
+let currentPage = 1;
 let totalHits = 0;
-const lightbox = new SimpleLightbox('.gallery a');
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
-  query = e.target.elements['search-text'].value.trim();
+  currentQuery = e.target.elements['search-text'].value.trim();
 
-  if (!query) {
+  if (!currentQuery) {
     iziToast.warning({
       message: 'Please enter a search term!',
       position: 'topRight',
@@ -25,30 +30,32 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  page = 1;
+  currentPage = 1;
   clearGallery();
   hideLoadMoreButton();
   await fetchImages();
 });
 
 loadMoreBtn.addEventListener('click', async () => {
-  page += 1;
+  currentPage += 1;
   await fetchImages();
 });
 
 async function fetchImages() {
   try {
     showLoader();
-    const data = await getImagesByQuery(query, page);
+    const data = await getImagesByQuery(currentQuery, currentPage);
     totalHits = data.totalHits;
 
-    if (data.hits.length === 0 && page === 1) {
-      iziToast.error({ message: 'Sorry, no images found.', position: 'topRight' });
+    if (data.hits.length === 0 && currentPage === 1) {
+      iziToast.error({
+        message: 'Sorry, no images found.',
+        position: 'topRight',
+      });
       return;
     }
 
     createGallery(data.hits);
-    lightbox.refresh();
 
     const shownImages = document.querySelectorAll('.gallery a').length;
     if (shownImages >= totalHits) {
@@ -61,9 +68,12 @@ async function fetchImages() {
       showLoadMoreButton();
     }
 
-    if (page > 1) scrollPage();
+    if (currentPage > 1) scrollPage();
   } catch (error) {
-    iziToast.error({ message: 'Oops! Something went wrong.', position: 'topRight' });
+    iziToast.error({
+      message: 'Oops! Something went wrong.',
+      position: 'topRight',
+    });
     console.error(error);
   } finally {
     hideLoader();
@@ -77,15 +87,3 @@ function scrollPage() {
     behavior: 'smooth',
   });
 }
-  
-
-  
-  
-
-
-
-
-
-
-
-
