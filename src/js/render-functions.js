@@ -65,3 +65,13 @@ export function showLoadMoreButton() {
 export function hideLoadMoreButton() {
   document.querySelector('.load-more').classList.add('hidden');
 }
+
+export function showLoadingText() {
+  const loadingText = document.querySelector('.loading-text');
+  if (loadingText) loadingText.style.display = 'block';
+}
+
+export function hideLoadingText() {
+  const loadingText = document.querySelector('.loading-text');
+  if (loadingText) loadingText.style.display = 'none';
+}
