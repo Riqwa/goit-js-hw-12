@@ -8,6 +8,8 @@ const lightbox = new SimpleLightbox('.gallery a', {
   captionDelay: 250,
 });
 
+
+
 export function createGallery(images) {
   const gallery = document.querySelector('.gallery'); 
   const markup = images
@@ -53,4 +55,13 @@ export function showLoader() {
 
 export function hideLoader() {
   loader.classList.remove('is-visible');
+}
+
+
+export function showLoadMoreButton() {
+  document.querySelector('.load-more').classList.remove('hidden');
+}
+
+export function hideLoadMoreButton() {
+  document.querySelector('.load-more').classList.add('hidden');
 }

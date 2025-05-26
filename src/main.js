@@ -3,12 +3,19 @@ import { getImagesByQuery } from './js/pixabay-api.js';
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
-const form = document.querySelector('.form');
 
+const form = document.querySelector('#search-form');
+const gallery = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
+
+let query = '';
+let page = 1;
+let totalHits = 0;
+const lightbox = new SimpleLightbox('.gallery a');
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const query = e.target.elements['search-text'].value.trim();
+  query = e.target.elements['search-text'].value.trim();
 
   if (!query) {
     iziToast.warning({
@@ -18,29 +25,59 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
+  page = 1;
   clearGallery();
-  showLoader();
+  hideLoadMoreButton();
+  await fetchImages();
+});
 
+loadMoreBtn.addEventListener('click', async () => {
+  page += 1;
+  await fetchImages();
+});
+
+async function fetchImages() {
   try {
-    const data = await getImagesByQuery(query);
+    showLoader();
+    const data = await getImagesByQuery(query, page);
+    totalHits = data.totalHits;
 
-    if (data.hits.length === 0) {
+    if (data.hits.length === 0 && page === 1) {
+      iziToast.error({ message: 'Sorry, no images found.', position: 'topRight' });
+      return;
+    }
+
+    createGallery(data.hits);
+    lightbox.refresh();
+
+    const shownImages = document.querySelectorAll('.gallery a').length;
+    if (shownImages >= totalHits) {
+      hideLoadMoreButton();
       iziToast.info({
-        message: 'Sorry, there are no images matching your search query. Please try again!',
+        message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
     } else {
-      createGallery(data.hits);
+      showLoadMoreButton();
     }
-  } catch (err) {
-    iziToast.error({
-      message: 'Something went wrong. Please try again later.',
-      position: 'topRight',
-    });
+
+    if (page > 1) scrollPage();
+  } catch (error) {
+    iziToast.error({ message: 'Oops! Something went wrong.', position: 'topRight' });
+    console.error(error);
   } finally {
     hideLoader();
   }
-});
+}
+
+function scrollPage() {
+  const { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
+  
 
   
   
